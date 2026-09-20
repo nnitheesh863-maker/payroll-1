@@ -1,18 +1,30 @@
 """
-Base SQLAlchemy model class providing common audit timestamps and helper methods.
-"""
-from datetime import datetime, timezone
-from sqlalchemy import DateTime, Column
-from sqlalchemy.orm import declarative_base
+Shared model utilities and base mixins for PeoplePay360.
 
-BaseModel = declarative_base()
+Provides a timestamp mixin so all tables carry ``created_at`` /
+``updated_at`` without duplicating column definitions. Defaults are
+Python-side (UTC) so the models work on PostgreSQL and on SQLite
+(which the test-suite uses for model tests).
+"""
+
+from datetime import datetime, timezone
+from app.extensions import db
+
+
+def utcnow() -> datetime:
+    """Current UTC timestamp (timezone-aware)."""
+    return datetime.now(timezone.utc)
+
 
 class TimestampMixin:
-    """Mixin adding created_at and updated_at UTC timestamps to models."""
-    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
-    updated_at = Column(
-        DateTime(timezone=True),
-        default=lambda: datetime.now(timezone.utc),
-        onupdate=lambda: datetime.now(timezone.utc),
-        nullable=False
+    """Adds ``created_at`` / ``updated_at`` columns to a model."""
+
+    created_at = db.Column(
+        db.DateTime(timezone=True), nullable=False, default=utcnow
+    )
+    updated_at = db.Column(
+        db.DateTime(timezone=True),
+        nullable=False,
+        default=utcnow,
+        onupdate=utcnow,
     )
