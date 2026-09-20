@@ -1,31 +1,18 @@
 """
-Shared model utilities for Phase 1+.
-
-Provides a timestamp mixin so all tables carry ``created_at`` /
-``updated_at`` without duplicating column definitions. Defaults are
-Python-side (UTC) so the models work on PostgreSQL and on SQLite
-(which the test-suite uses for model tests).
+Base SQLAlchemy model class providing common audit timestamps and helper methods.
 """
-
 from datetime import datetime, timezone
+from sqlalchemy import DateTime, Column
+from sqlalchemy.orm import declarative_base
 
-from app.extensions import db
-
-
-def utcnow() -> datetime:
-    """Current UTC timestamp (timezone-aware)."""
-    return datetime.now(timezone.utc)
-
+BaseModel = declarative_base()
 
 class TimestampMixin:
-    """Adds ``created_at`` / ``updated_at`` columns to a model."""
-
-    created_at = db.Column(
-        db.DateTime(timezone=True), nullable=False, default=utcnow
-    )
-    updated_at = db.Column(
-        db.DateTime(timezone=True),
-        nullable=False,
-        default=utcnow,
-        onupdate=utcnow,
+    """Mixin adding created_at and updated_at UTC timestamps to models."""
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
+    updated_at = Column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc),
+        nullable=False
     )
