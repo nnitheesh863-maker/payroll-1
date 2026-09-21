@@ -7,6 +7,7 @@ import {
   DEFAULT_USERS,
   findUserByEmail,
   findUserById,
+  formatSafeUser,
   hashPassword,
   ROLES,
   verifyPassword,
@@ -43,12 +44,11 @@ router.post('/login', async (req, res) => {
       if (isValid) {
         const accessToken = createAccessToken(dbUser);
         const refreshToken = createRefreshToken(dbUser);
-        const { password_hash, password, ...safeUser } = dbUser;
         return res.json({
           access_token: accessToken,
           refresh_token: refreshToken,
           token_type: 'bearer',
-          user: safeUser,
+          user: formatSafeUser(dbUser),
         });
       }
     }
@@ -58,12 +58,11 @@ router.post('/login', async (req, res) => {
     if (persona && persona.password === plainPassword && persona.is_active !== false) {
       const accessToken = createAccessToken(persona);
       const refreshToken = createRefreshToken(persona);
-      const { password, ...safeUser } = persona;
       return res.json({
         access_token: accessToken,
         refresh_token: refreshToken,
         token_type: 'bearer',
-        user: safeUser,
+        user: formatSafeUser(persona),
       });
     }
 
