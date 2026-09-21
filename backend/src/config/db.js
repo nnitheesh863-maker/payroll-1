@@ -30,3 +30,17 @@ export const query = async (text, params) => {
     throw err;
   }
 };
+
+/**
+ * Health check helper to verify database connectivity
+ */
+export const testDbConnection = async () => {
+  try {
+    const client = await pool.connect();
+    const res = await client.query('SELECT 1 AS connected;');
+    client.release();
+    return res.rows[0]?.connected === 1;
+  } catch (err) {
+    return false;
+  }
+};
