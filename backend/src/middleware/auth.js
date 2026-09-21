@@ -1,12 +1,7 @@
-import { decodeToken, findUserById, hasPermission, ROLES } from '../services/auth.service.js';
+import { decodeToken, extractBearerToken, findUserById, hasPermission, ROLES } from '../services/auth.service.js';
 
 export const jwtRequired = async (req, res, next) => {
-  const authHeader = req.headers.authorization || '';
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ detail: 'Authentication token missing or invalid.' });
-  }
-
-  const token = authHeader.substring(7).trim();
+  const token = extractBearerToken(req.headers.authorization);
   if (!token) {
     return res.status(401).json({ detail: 'Authentication token missing or invalid.' });
   }
