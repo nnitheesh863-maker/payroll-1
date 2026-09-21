@@ -108,7 +108,7 @@ const serializeDbEmployee = (emp, idx) => {
 
 // ── List Employees ──
 router.get('/', async (req, res) => {
-  const { department, status, search } = req.query;
+  const { department, status, position, search } = req.query;
 
   let employeesList = EMPLOYEES;
   try {
@@ -131,6 +131,9 @@ router.get('/', async (req, res) => {
   }
   if (status && status.toUpperCase() !== 'ALL') {
     result = result.filter(e => e.status.toLowerCase() === status.toLowerCase());
+  }
+  if (position && position.toUpperCase() !== 'ALL') {
+    result = result.filter(e => e.position.toLowerCase() === position.toLowerCase());
   }
   if (search) {
     const s = search.toLowerCase();
