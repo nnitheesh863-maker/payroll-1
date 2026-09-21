@@ -98,6 +98,12 @@ export const DEFAULT_USERS = {
   },
 };
 
+export const formatSafeUser = (user) => {
+  if (!user) return null;
+  const { password, password_hash, ...safe } = user;
+  return safe;
+};
+
 export const hashPassword = async (password) => {
   return await bcrypt.hash(password, 10);
 };
