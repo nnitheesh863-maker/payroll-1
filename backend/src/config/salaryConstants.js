@@ -1,0 +1,16 @@
+/**
+ * Statutory Payroll & Salary Component Constants
+ */
+export const SALARY_CATEGORIES = {
+  BASIC: 'BASIC',
+  ALLOWANCE: 'ALLOWANCE',
+  DEDUCTION: 'DEDUCTION',
+};
+
+export const STATUTORY_RATES = {
+  BASIC_PERCENTAGE: 50.0,
+  HRA_PERCENTAGE: 25.0,
+  PF_PERCENTAGE: 12.0,
+  TDS_PERCENTAGE: 6.5,
+  WORKING_DAYS_PER_MONTH: 30,
+};
