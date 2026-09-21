@@ -271,7 +271,20 @@ router.get('/:id/payslips', async (req, res) => {
 
 router.get('/:id/time-off', async (req, res) => {
   const empId = Number(req.params.id);
-  return res.json([]);
+  const emp = EMPLOYEES.find(e => e.id === empId);
+  const records = [
+    {
+      id: 1,
+      employee_id: empId,
+      employee_name: emp ? `${emp.first_name} ${emp.last_name}` : 'Employee',
+      time_off_type_name: 'Casual Leave',
+      start_date: '2026-09-10',
+      end_date: '2026-09-12',
+      days_count: 3,
+      status: 'Approved',
+    },
+  ];
+  return res.json(records);
 });
 
 export default router;
