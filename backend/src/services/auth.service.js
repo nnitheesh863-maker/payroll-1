@@ -134,6 +134,15 @@ export const createRefreshToken = (user) => {
   return jwt.sign(payload, config.JWT_SECRET_KEY, { expiresIn: config.JWT_REFRESH_EXPIRES_IN });
 };
 
+export const extractBearerToken = (authHeader) => {
+  if (!authHeader || typeof authHeader !== 'string') return null;
+  const parts = authHeader.trim().split(' ');
+  if (parts.length === 2 && parts[0].toLowerCase() === 'bearer') {
+    return parts[1].trim();
+  }
+  return null;
+};
+
 export const decodeToken = (token, expectedType = 'access') => {
   try {
     const decoded = jwt.verify(token, config.JWT_SECRET_KEY);
