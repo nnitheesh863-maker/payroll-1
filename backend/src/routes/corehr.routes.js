@@ -91,6 +91,7 @@ export const STRUCTURES = [
 
 // ── Contracts ──
 router.get('/contracts', async (req, res) => {
+  const { status } = req.query;
   try {
     const dbRes = await query(`
       SELECT c.*, e.first_name, e.last_name, e.job_title, d.name as department_name, s.name as structure_name
@@ -101,7 +102,7 @@ router.get('/contracts', async (req, res) => {
       ORDER BY c.id ASC;
     `);
     if (dbRes.rows && dbRes.rows.length > 0) {
-      const formatted = dbRes.rows.map((c, idx) => ({
+      let formatted = dbRes.rows.map((c, idx) => ({
         id: idx + 1,
         uuid: String(c.id),
         contract_code: `CNT-${String(idx + 1).padStart(3, '0')}`,
@@ -120,12 +121,19 @@ router.get('/contracts', async (req, res) => {
           department: c.department_name || 'Operations',
         },
       }));
+      if (status && status !== 'ALL') {
+        formatted = formatted.filter(c => c.status.toLowerCase() === status.toLowerCase());
+      }
       return res.json(formatted);
     }
   } catch (err) {
     // fallback
   }
-  return res.json(CONTRACTS);
+  let result = CONTRACTS;
+  if (status && status !== 'ALL') {
+    result = result.filter(c => c.status.toLowerCase() === status.toLowerCase());
+  }
+  return res.json(result);
 });
 
 router.get('/contracts/:id', (req, res) => {
